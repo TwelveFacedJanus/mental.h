@@ -1,2 +1,18 @@
 # OSX
 .DS_Store
+
+# Code
+*.c
+*.cpp
+*.hpp
+
+# Media
+*.png
+*.jpg
+*.gif
+*.mp4
+*.mp3
+
+# Archives
+*.zip
+*.7z
