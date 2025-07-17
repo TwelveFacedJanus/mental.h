@@ -34,10 +34,11 @@ typedef struct Vec3_##T { \
  * The function `vec3_zero_T` sets all components (x, y, z) of the vector to 0.
  */
 #define VEC3_ZERO(T) \
-void vec3_zero_##T(Vec3_##T* v) { \
+MentalResult vec3_zero_##T(Vec3_##T* v) { \
     v->x = (T)0; \
     v->y = (T)0; \
     v->z = (T)0; \
+    return MENTAL_OK; \
 }
 
 /**
@@ -48,10 +49,11 @@ void vec3_zero_##T(Vec3_##T* v) { \
  * The function `vec3_one_T` sets all components (x, y, z) of the vector to 1.
  */
 #define VEC3_ONE(T) \
-void vec3_one_##T(Vec3_##T* v) { \
+MentalResult vec3_one_##T(Vec3_##T* v) { \
     v->x = (T)1; \
     v->y = (T)1; \
     v->z = (T)1; \
+    return MENTAL_OK; \
 }
 
 /**
@@ -62,10 +64,11 @@ void vec3_one_##T(Vec3_##T* v) { \
  * The function `vec3_fill_T` sets all components (x, y, z) to the given value.
  */
 #define VEC3_FILL(T) \
-void vec3_fill_##T(Vec3_##T* v, T value) { \
+MentalResult vec3_fill_##T(Vec3_##T* v, T value) { \
     v->x = value; \
     v->y = value; \
     v->z = value; \
+    return MENTAL_OK; \
 }
 
 /**
@@ -76,10 +79,11 @@ void vec3_fill_##T(Vec3_##T* v, T value) { \
  * The function `vec3_to_array_T` copies the vector components to a C array of size 3.
  */
 #define VEC3_TO_ARRAY(T) \
-void vec3_to_array_##T(const Vec3_##T* v, T arr[3]) { \
+MentalResult vec3_to_array_##T(const Vec3_##T* v, T arr[3]) { \
     arr[0] = v->x; \
     arr[1] = v->y; \
     arr[2] = v->z; \
+    return MENTAL_OK; \
 }
 
 #ifdef __cplusplus
@@ -121,10 +125,11 @@ typedef struct Mat3_##T { \
  * The function `mat3_zero_T` sets all elements of the matrix to 0.
  */
 #define MAT3_ZERO(T) \
-void mat3_zero_##T(Mat3_##T* m) { \
+MentalResult mat3_zero_##T(Mat3_##T* m) { \
     vec3_zero_##T(&m->row0); \
     vec3_zero_##T(&m->row1); \
     vec3_zero_##T(&m->row2); \
+    return MENTAL_OK; \
 }
 
 /**
@@ -135,10 +140,11 @@ void mat3_zero_##T(Mat3_##T* m) { \
  * The function `mat3_one_T` sets all elements of the matrix to 1.
  */
 #define MAT3_ONE(T) \
-void mat3_one_##T(Mat3_##T* m) { \
+MentalResult mat3_one_##T(Mat3_##T* m) { \
     vec3_fill_##T(&m->row0, (T)1); \
     vec3_fill_##T(&m->row1, (T)1); \
     vec3_fill_##T(&m->row2, (T)1); \
+    return MENTAL_OK; \
 }
 
 /**
@@ -149,10 +155,11 @@ void mat3_one_##T(Mat3_##T* m) { \
  * The function `mat3_identity_T` sets the matrix to the identity matrix (1s on diagonal, 0s elsewhere).
  */
 #define MAT3_IDENTITY(T) \
-void mat3_identity_##T(Mat3_##T* m) { \
+MentalResult mat3_identity_##T(Mat3_##T* m) { \
     vec3_zero_##T(&m->row0); m->row0.x = (T)1; \
     vec3_zero_##T(&m->row1); m->row1.y = (T)1; \
     vec3_zero_##T(&m->row2); m->row2.z = (T)1; \
+    return MENTAL_OK; \
 }
 
 /**
@@ -163,10 +170,11 @@ void mat3_identity_##T(Mat3_##T* m) { \
  * The function `mat3_fill_T` sets all elements of the matrix to the given value.
  */
 #define MAT3_FILL(T) \
-void mat3_fill_##T(Mat3_##T* m, T value) { \
+MentalResult mat3_fill_##T(Mat3_##T* m, T value) { \
     vec3_fill_##T(&m->row0, value); \
     vec3_fill_##T(&m->row1, value); \
     vec3_fill_##T(&m->row2, value); \
+    return MENTAL_OK; \
 }
 
 /**
@@ -177,13 +185,14 @@ void mat3_fill_##T(Mat3_##T* m, T value) { \
  * The function `mat3_fill_custom_T` sets each element of the matrix to the specified values.
  */
 #define MAT3_FILL_CUSTOM(T) \
-void mat3_fill_custom_##T(Mat3_##T* m, \
+MentalResult mat3_fill_custom_##T(Mat3_##T* m, \
     T m00, T m01, T m02, \
     T m10, T m11, T m12, \
     T m20, T m21, T m22) { \
     m->row0.x = m00; m->row0.y = m01; m->row0.z = m02; \
     m->row1.x = m10; m->row1.y = m11; m->row1.z = m12; \
     m->row2.x = m20; m->row2.y = m21; m->row2.z = m22; \
+    return MENTAL_OK; \
 }
 
 /**
