@@ -261,4 +261,6 @@ typedef enum MentalResult
 }
 MentalResult;
 
+#include "Mathematica.h"
+
 #endif // MENTAL_H
