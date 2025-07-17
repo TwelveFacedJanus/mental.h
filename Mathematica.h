@@ -1,17 +1,13 @@
 #ifndef MATHEMATICA_H
 #define MATHEMATICA_H
 
-#ifdef __cplusplus
-#include <vector>
-#endif
-
 /**
  * @file mathematica.h
  * @brief Generic 3D vector and 3x3 matrix library with support for user-defined types.
  *
  * This header provides macros to define 3D vectors (`Vec3`) and 3x3 matrices (`Mat3`)
- * for any data type, along with operations for initialization, filling, and conversion
- * to C arrays and C++ std::vector (in C++ environments).
+ * for any data type, along with operations for initialization, filling, arithmetic operations,
+ * and conversion to C arrays and C++ std::vector (in C++ environments).
  */
 
 /**
@@ -30,11 +26,10 @@ typedef struct Vec3_##T { \
  * @def VEC3_ZERO(T)
  * @brief Defines a function to set a Vec3_T to zero.
  * @param T The data type of the vector components.
- *
- * The function `vec3_zero_T` sets all components (x, y, z) of the vector to 0.
  */
 #define VEC3_ZERO(T) \
 MentalResult vec3_zero_##T(Vec3_##T* v) { \
+    if (!v) return MENTAL_FATAL; \
     v->x = (T)0; \
     v->y = (T)0; \
     v->z = (T)0; \
@@ -45,11 +40,10 @@ MentalResult vec3_zero_##T(Vec3_##T* v) { \
  * @def VEC3_ONE(T)
  * @brief Defines a function to set a Vec3_T to one.
  * @param T The data type of the vector components.
- *
- * The function `vec3_one_T` sets all components (x, y, z) of the vector to 1.
  */
 #define VEC3_ONE(T) \
 MentalResult vec3_one_##T(Vec3_##T* v) { \
+    if (!v) return MENTAL_FATAL; \
     v->x = (T)1; \
     v->y = (T)1; \
     v->z = (T)1; \
@@ -60,11 +54,10 @@ MentalResult vec3_one_##T(Vec3_##T* v) { \
  * @def VEC3_FILL(T)
  * @brief Defines a function to fill a Vec3_T with a specified value.
  * @param T The data type of the vector components.
- *
- * The function `vec3_fill_T` sets all components (x, y, z) to the given value.
  */
 #define VEC3_FILL(T) \
 MentalResult vec3_fill_##T(Vec3_##T* v, T value) { \
+    if (!v) return MENTAL_FATAL; \
     v->x = value; \
     v->y = value; \
     v->z = value; \
@@ -75,11 +68,10 @@ MentalResult vec3_fill_##T(Vec3_##T* v, T value) { \
  * @def VEC3_TO_ARRAY(T)
  * @brief Defines a function to convert a Vec3_T to a C array.
  * @param T The data type of the vector components.
- *
- * The function `vec3_to_array_T` copies the vector components to a C array of size 3.
  */
 #define VEC3_TO_ARRAY(T) \
 MentalResult vec3_to_array_##T(const Vec3_##T* v, T arr[3]) { \
+    if (!v || !arr) return MENTAL_FATAL; \
     arr[0] = v->x; \
     arr[1] = v->y; \
     arr[2] = v->z; \
@@ -91,12 +83,10 @@ MentalResult vec3_to_array_##T(const Vec3_##T* v, T arr[3]) { \
  * @def VEC3_TO_VECTOR(T)
  * @brief Defines a function to convert a Vec3_T to a C++ std::vector (C++ only).
  * @param T The data type of the vector components.
- *
- * The function `vec3_to_vector_T` returns a std::vector<T> containing the vector components.
- * @note Only available when compiled with a C++ compiler.
  */
 #define VEC3_TO_VECTOR(T) \
 std::vector<T> vec3_to_vector_##T(const Vec3_##T* v) { \
+    if (!v) return std::vector<T>(); \
     return std::vector<T>{v->x, v->y, v->z}; \
 }
 #else
@@ -104,11 +94,65 @@ std::vector<T> vec3_to_vector_##T(const Vec3_##T* v) { \
 #endif
 
 /**
+ * @def VEC3_ADD(T)
+ * @brief Defines a function to add two Vec3_T vectors.
+ * @param T The data type of the vector components.
+ */
+#define VEC3_ADD(T) \
+MentalResult vec3_add_##T(const Vec3_##T* a, const Vec3_##T* b, Vec3_##T* result) { \
+    if (!a || !b || !result) return MENTAL_FATAL; \
+    result->x = a->x + b->x; \
+    result->y = a->y + b->y; \
+    result->z = a->z + b->z; \
+    return MENTAL_OK; \
+}
+
+/**
+ * @def VEC3_SUB(T)
+ * @brief Defines a function to subtract two Vec3_T vectors.
+ * @param T The data type of the vector components.
+ */
+#define VEC3_SUB(T) \
+MentalResult vec3_sub_##T(const Vec3_##T* a, const Vec3_##T* b, Vec3_##T* result) { \
+    if (!a || !b || !result) return MENTAL_FATAL; \
+    result->x = a->x - b->x; \
+    result->y = a->y - b->y; \
+    result->z = a->z - b->z; \
+    return MENTAL_OK; \
+}
+
+/**
+ * @def VEC3_SCALE(T)
+ * @brief Defines a function to multiply a Vec3_T by a scalar.
+ * @param T The data type of the vector components.
+ */
+#define VEC3_SCALE(T) \
+MentalResult vec3_scale_##T(const Vec3_##T* v, T scalar, Vec3_##T* result) { \
+    if (!v || !result) return MENTAL_FATAL; \
+    result->x = v->x * scalar; \
+    result->y = v->y * scalar; \
+    result->z = v->z * scalar; \
+    return MENTAL_OK; \
+}
+
+/**
+ * @def VEC3_DIV(T)
+ * @brief Defines a function to divide a Vec3_T by a scalar.
+ * @param T The data type of the vector components.
+ */
+#define VEC3_DIV(T) \
+MentalResult vec3_div_##T(const Vec3_##T* v, T scalar, Vec3_##T* result) { \
+    if (!v || !result || scalar == (T)0) return MENTAL_FATAL; \
+    result->x = v->x / scalar; \
+    result->y = v->y / scalar; \
+    result->z = v->z / scalar; \
+    return MENTAL_OK; \
+}
+
+/**
  * @def DEFINE_MAT3(T)
  * @brief Defines a 3x3 matrix structure using Vec3_T for rows.
  * @param T The data type of the matrix components.
- *
- * Creates a struct `Mat3_T` with three Vec3_T rows (row0, row1, row2).
  */
 #define DEFINE_MAT3(T) \
 typedef struct Mat3_##T { \
@@ -121,11 +165,10 @@ typedef struct Mat3_##T { \
  * @def MAT3_ZERO(T)
  * @brief Defines a function to set a Mat3_T to zero.
  * @param T The data type of the matrix components.
- *
- * The function `mat3_zero_T` sets all elements of the matrix to 0.
  */
 #define MAT3_ZERO(T) \
 MentalResult mat3_zero_##T(Mat3_##T* m) { \
+    if (!m) return MENTAL_FATAL; \
     vec3_zero_##T(&m->row0); \
     vec3_zero_##T(&m->row1); \
     vec3_zero_##T(&m->row2); \
@@ -136,11 +179,10 @@ MentalResult mat3_zero_##T(Mat3_##T* m) { \
  * @def MAT3_ONE(T)
  * @brief Defines a function to set a Mat3_T to one.
  * @param T The data type of the matrix components.
- *
- * The function `mat3_one_T` sets all elements of the matrix to 1.
  */
 #define MAT3_ONE(T) \
 MentalResult mat3_one_##T(Mat3_##T* m) { \
+    if (!m) return MENTAL_FATAL; \
     vec3_fill_##T(&m->row0, (T)1); \
     vec3_fill_##T(&m->row1, (T)1); \
     vec3_fill_##T(&m->row2, (T)1); \
@@ -151,11 +193,10 @@ MentalResult mat3_one_##T(Mat3_##T* m) { \
  * @def MAT3_IDENTITY(T)
  * @brief Defines a function to set a Mat3_T to the identity matrix.
  * @param T The data type of the matrix components.
- *
- * The function `mat3_identity_T` sets the matrix to the identity matrix (1s on diagonal, 0s elsewhere).
  */
 #define MAT3_IDENTITY(T) \
 MentalResult mat3_identity_##T(Mat3_##T* m) { \
+    if (!m) return MENTAL_FATAL; \
     vec3_zero_##T(&m->row0); m->row0.x = (T)1; \
     vec3_zero_##T(&m->row1); m->row1.y = (T)1; \
     vec3_zero_##T(&m->row2); m->row2.z = (T)1; \
@@ -166,11 +207,10 @@ MentalResult mat3_identity_##T(Mat3_##T* m) { \
  * @def MAT3_FILL(T)
  * @brief Defines a function to fill a Mat3_T with a specified value.
  * @param T The data type of the matrix components.
- *
- * The function `mat3_fill_T` sets all elements of the matrix to the given value.
  */
 #define MAT3_FILL(T) \
 MentalResult mat3_fill_##T(Mat3_##T* m, T value) { \
+    if (!m) return MENTAL_FATAL; \
     vec3_fill_##T(&m->row0, value); \
     vec3_fill_##T(&m->row1, value); \
     vec3_fill_##T(&m->row2, value); \
@@ -181,14 +221,13 @@ MentalResult mat3_fill_##T(Mat3_##T* m, T value) { \
  * @def MAT3_FILL_CUSTOM(T)
  * @brief Defines a function to fill a Mat3_T with custom values.
  * @param T The data type of the matrix components.
- *
- * The function `mat3_fill_custom_T` sets each element of the matrix to the specified values.
  */
 #define MAT3_FILL_CUSTOM(T) \
 MentalResult mat3_fill_custom_##T(Mat3_##T* m, \
     T m00, T m01, T m02, \
     T m10, T m11, T m12, \
     T m20, T m21, T m22) { \
+    if (!m) return MENTAL_FATAL; \
     m->row0.x = m00; m->row0.y = m01; m->row0.z = m02; \
     m->row1.x = m10; m->row1.y = m11; m->row1.z = m12; \
     m->row2.x = m20; m->row2.y = m21; m->row2.z = m22; \
@@ -196,12 +235,85 @@ MentalResult mat3_fill_custom_##T(Mat3_##T* m, \
 }
 
 /**
+ * @def MAT3_ADD(T)
+ * @brief Defines a function to add two Mat3_T matrices.
+ * @param T The data type of the matrix components.
+ */
+#define MAT3_ADD(T) \
+MentalResult mat3_add_##T(const Mat3_##T* a, const Mat3_##T* b, Mat3_##T* result) { \
+    if (!a || !b || !result) return MENTAL_FATAL; \
+    vec3_add_##T(&a->row0, &b->row0, &result->row0); \
+    vec3_add_##T(&a->row1, &b->row1, &result->row1); \
+    vec3_add_##T(&a->row2, &b->row2, &result->row2); \
+    return MENTAL_OK; \
+}
+
+/**
+ * @def MAT3_SUB(T)
+ * @brief Defines a function to subtract two Mat3_T matrices.
+ * @param T The data type of the matrix components.
+ */
+#define MAT3_SUB(T) \
+MentalResult mat3_sub_##T(const Mat3_##T* a, const Mat3_##T* b, Mat3_##T* result) { \
+    if (!a || !b || !result) return MENTAL_FATAL; \
+    vec3_sub_##T(&a->row0, &b->row0, &result->row0); \
+    vec3_sub_##T(&a->row1, &b->row1, &result->row1); \
+    vec3_sub_##T(&a->row2, &b->row2, &result->row2); \
+    return MENTAL_OK; \
+}
+
+/**
+ * @def MAT3_SCALE(T)
+ * @brief Defines a function to multiply a Mat3_T by a scalar.
+ * @param T The data type of the matrix components.
+ */
+#define MAT3_SCALE(T) \
+MentalResult mat3_scale_##T(const Mat3_##T* m, T scalar, Mat3_##T* result) { \
+    if (!m || !result) return MENTAL_FATAL; \
+    vec3_scale_##T(&m->row0, scalar, &result->row0); \
+    vec3_scale_##T(&m->row1, scalar, &result->row1); \
+    vec3_scale_##T(&m->row2, scalar, &result->row2); \
+    return MENTAL_OK; \
+}
+
+/**
+ * @def MAT3_DIV(T)
+ * @brief Defines a function to divide a Mat3_T by a scalar.
+ * @param T The data type of the matrix components.
+ */
+#define MAT3_DIV(T) \
+MentalResult mat3_div_##T(const Mat3_##T* m, T scalar, Mat3_##T* result) { \
+    if (!m || !result || scalar == (T)0) return MENTAL_FATAL; \
+    vec3_div_##T(&m->row0, scalar, &result->row0); \
+    vec3_div_##T(&m->row1, scalar, &result->row1); \
+    vec3_div_##T(&m->row2, scalar, &result->row2); \
+    return MENTAL_OK; \
+}
+
+/**
+ * @def MAT3_MUL(T)
+ * @brief Defines a function to multiply two Mat3_T matrices.
+ * @param T The data type of the matrix components.
+ */
+#define MAT3_MUL(T) \
+MentalResult mat3_mul_##T(const Mat3_##T* a, const Mat3_##T* b, Mat3_##T* result) { \
+    if (!a || !b || !result) return MENTAL_FATAL; \
+    result->row0.x = a->row0.x * b->row0.x + a->row0.y * b->row1.x + a->row0.z * b->row2.x; \
+    result->row0.y = a->row0.x * b->row0.y + a->row0.y * b->row1.y + a->row0.z * b->row2.y; \
+    result->row0.z = a->row0.x * b->row0.z + a->row0.y * b->row1.z + a->row0.z * b->row2.z; \
+    result->row1.x = a->row1.x * b->row0.x + a->row1.y * b->row1.x + a->row1.z * b->row2.x; \
+    result->row1.y = a->row1.x * b->row0.y + a->row1.y * b->row1.y + a->row1.z * b->row2.y; \
+    result->row1.z = a->row1.x * b->row0.z + a->row1.y * b->row1.z + a->row1.z * b->row2.z; \
+    result->row2.x = a->row2.x * b->row0.x + a->row2.y * b->row1.x + a->row2.z * b->row2.x; \
+    result->row2.y = a->row2.x * b->row0.y + a->row2.y * b->row1.y + a->row2.z * b->row2.y; \
+    result->row2.z = a->row2.x * b->row0.z + a->row2.y * b->row1.z + a->row2.z * b->row2.z; \
+    return MENTAL_OK; \
+}
+
+/**
  * @def DEFINE_MATH_STRUCTS(T)
  * @brief Defines Vec3 and Mat3 with all associated operations for a given type.
  * @param T The data type for the vector and matrix components.
- *
- * This macro defines the Vec3_T and Mat3_T structures and all their operations,
- * including zeroing, filling, identity matrix creation, and conversions to arrays/vectors.
  */
 #define DEFINE_MATH_STRUCTS(T) \
     DEFINE_VEC3(T); \
@@ -210,12 +322,21 @@ MentalResult mat3_fill_custom_##T(Mat3_##T* m, \
     VEC3_FILL(T); \
     VEC3_TO_ARRAY(T); \
     VEC3_TO_VECTOR(T); \
+    VEC3_ADD(T); \
+    VEC3_SUB(T); \
+    VEC3_SCALE(T); \
+    VEC3_DIV(T); \
     DEFINE_MAT3(T); \
     MAT3_ZERO(T); \
     MAT3_ONE(T); \
     MAT3_IDENTITY(T); \
     MAT3_FILL(T); \
-    MAT3_FILL_CUSTOM(T)
+    MAT3_FILL_CUSTOM(T); \
+    MAT3_ADD(T); \
+    MAT3_SUB(T); \
+    MAT3_SCALE(T); \
+    MAT3_DIV(T); \
+    MAT3_MUL(T)
 
 // Predefined types for float, int, and double
 DEFINE_MATH_STRUCTS(float);  ///< Defines Vec3_float, Mat3_float, and their operations

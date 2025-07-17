@@ -12,6 +12,7 @@
 #ifdef __cplusplus
     #include <cstdint>
     #include <cstddef>
+    #include <vector>
 #else
     #include <stdint.h>
     #include <stddef.h>
@@ -24,7 +25,7 @@
  * \brief Макрос, определяющий версии mental.h
  */
 #define MENTAL_H_VERSION_MAJOR 1
-#define MENTAL_H_VERSION_MINOR 0
+#define MENTAL_H_VERSION_MINOR 3
 #define MENTAL_H_VERSION_PATCH 0
 
 /*! \defgroup IntegerTypes Целочисленные типы
