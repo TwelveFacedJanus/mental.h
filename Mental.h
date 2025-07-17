@@ -19,7 +19,10 @@
     #include <stdbool.h>
     #include <stdlib.h>
     #include <stdio.h>
+    #include <time.h>
+    #include <string.h>
 #endif
+
 
 /*! \def mental.h versions.
  * \brief Макрос, определяющий версии mental.h
@@ -262,6 +265,7 @@ typedef enum MentalResult
 }
 MentalResult;
 
+#include "Historical.h"
 #include "Mathematica.h"
 
 #endif // MENTAL_H
