@@ -21,6 +21,8 @@
     #include <stdio.h>
     #include <time.h>
     #include <string.h>
+    #include <assert.h>
+    #include <uv.h>
 #endif
 
 
@@ -267,5 +269,6 @@ MentalResult;
 
 #include "Historical.h"
 #include "Mathematica.h"
+#include "Asynchronous.h"
 
 #endif // MENTAL_H
