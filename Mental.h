@@ -12,19 +12,23 @@
 #ifdef __cplusplus
     #include <cstdint>
     #include <cstddef>
+    #include <vector>
 #else
     #include <stdint.h>
     #include <stddef.h>
     #include <stdbool.h>
     #include <stdlib.h>
     #include <stdio.h>
+    #include <time.h>
+    #include <string.h>
 #endif
+
 
 /*! \def mental.h versions.
  * \brief Макрос, определяющий версии mental.h
  */
 #define MENTAL_H_VERSION_MAJOR 1
-#define MENTAL_H_VERSION_MINOR 0
+#define MENTAL_H_VERSION_MINOR 3
 #define MENTAL_H_VERSION_PATCH 0
 
 /*! \defgroup IntegerTypes Целочисленные типы
@@ -260,5 +264,8 @@ typedef enum MentalResult
     MENTAL_ERROR = 1,   /*!< Ошибка выполнения. */
 }
 MentalResult;
+
+#include "Historical.h"
+#include "Mathematica.h"
 
 #endif // MENTAL_H

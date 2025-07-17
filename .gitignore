@@ -16,3 +16,6 @@
 # Archives
 *.zip
 *.7z
+
+# Executable
+a.out
