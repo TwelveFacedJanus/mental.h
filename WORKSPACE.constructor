@@ -1,0 +1,15 @@
+[project]
+name = "mental_h"
+version = "0.1.0"
+language = "C"
+
+[[targets]]
+name = "mentalGraphics"
+out_dir = "Binary"
+os_target = "macos"
+compiler = "clang"
+kind = "executable"
+sources = ["main.c"]
+defines = ["DEBUG=1"]
+compiler_flags = ["-Wall", "-Wextra", "-g"]
+linker_flags = ["-lglfw", "-lGLEW", "-luv", "-L/opt/homebrew/lib", "-I/opt/homebrew/include"]
