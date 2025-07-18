@@ -9,8 +9,6 @@
 #define PIPES_H
 
 #include "Mental.h"
-#include <stdlib.h> // Для realloc/free
-
 /**
  * @brief Default capacity for newly created pipelines
  */
