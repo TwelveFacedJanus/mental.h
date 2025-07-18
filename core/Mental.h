@@ -21,15 +21,31 @@
     #include <stdio.h>
     #include <time.h>
     #include <string.h>
+    #include <assert.h>
+    #include <uv.h>
 #endif
 
+#include <GL/glew.h>
+#include <vulkan/vulkan.h>
+#include <GLFW/glfw3.h>
 
 /*! \def mental.h versions.
  * \brief Макрос, определяющий версии mental.h
+ * \note Внимание, подобные макросы выстанавливаются автоматочески при сборке проекта. И эти будут удалены в будущем.
  */
-#define MENTAL_H_VERSION_MAJOR 1
-#define MENTAL_H_VERSION_MINOR 3
-#define MENTAL_H_VERSION_PATCH 0
+#define MENTAL_H_VERSION_MAJOR_A 1
+#define MENTAL_H_VERSION_MINOR_A 3
+#define MENTAL_H_VERSION_PATCH_A 0
+
+#define MENTAL_OPENGL_VERSION_MAJOR 3
+#define MENTAL_OPENGL_VERSION_MINOR 3
+
+// Макрос для создания лямбда-функций (GCC/Clang)
+#if defined(__GNUC__) || defined(__clang__)
+#define LAMBDA(ret_type, body) ({ ret_type __fn__ body __fn__; })
+#else
+#error "Lambda functions require GCC or Clang compiler"
+#endif
 
 /*! \defgroup IntegerTypes Целочисленные типы
  * \brief Типы для работы с целыми числами фиксированной ширины.
@@ -265,7 +281,84 @@ typedef enum MentalResult
 }
 MentalResult;
 
+typedef enum MentalGraphicsBackendType {
+    MENTAL_OPENGL  = 0,
+    MENTAL_VULKAN  = 1,
+    MENTAL_MOLTEN  = 2,
+    MENTAL_NOTHING = 3,
+} MentalGraphicsBackendType;
+
+typedef enum MentalStructureType {
+    MENTAL_STRUCTURE_TYPE_GRAPHICS_INFO = 0,
+    MENTAL_STRUCTURE_TYPE_GRAPHICS = 1,
+    MENTAL_STRUCTURE_TYPE_APPLICATION = 2,
+    MENTAL_STRUCTURE_TYPE_FUNCTION_PIPELINE = 3,
+    MENTAL_STRUCTURE_TYPE_FUNCTION_PIPELINE_INFO = 4,
+} MentalStructureType;
+
+typedef struct MentalApplicationCreateInfo {
+    MentalStructureType sType;
+    MentalGraphicsBackendType gbType;
+    int debugLevel;
+} MentalApplicationCreateInfo;
+
+typedef struct MentalApplication {
+    MentalStructureType sType;
+    union {
+        GLFWwindow* window;
+    } graphics;
+} MentalApplication;
+
 #include "Historical.h"
 #include "Mathematica.h"
+#include "Asynchronous.h"
+#include "Pipes.h"
+
+static MentalResult initializeMentalApplication(MentalApplicationCreateInfo info, MentalApplication* app)
+{
+    g_log_level = info.debugLevel;
+    
+    MENTAL_DEBUG("Initializing Mental Application.");
+    if (app == NULL)
+    {
+        MENTAL_WARN("MentalApplication* is NULL.");
+        return MENTAL_FATAL;
+    }
+
+    if (info.gbType != MENTAL_NOTHING)
+    {
+        if (!glfwInit())
+        {
+            MENTAL_WARN("Cannot initialize GLFW library.");
+            return MENTAL_FATAL;
+        }
+        MENTAL_DEBUG("GLFW library has been initialized.");
+        
+        if (info.gbType == MENTAL_OPENGL)
+        {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, MENTAL_OPENGL_VERSION_MAJOR);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, MENTAL_OPENGL_VERSION_MINOR);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        }
+
+        app->graphics.window = glfwCreateWindow(800, 600, "Mental OpenGL renderer.", NULL, NULL);
+        if (app->graphics.window == NULL) {
+            const char* description;
+            int code = glfwGetError(&description);
+            MENTAL_WARN("GLFW window creation failed: %s (code: %d)", description, code);
+            glfwTerminate();
+            return MENTAL_FATAL;
+        }
+        glfwMakeContextCurrent(app->graphics.window);
+        
+        if (glewInit() != GLEW_OK) {
+            MENTAL_WARN("Failed to initialize mental engine. Cannot initialize GLEW.");
+            return MENTAL_FATAL;
+        }
+        MENTAL_DEBUG("GLFW window has been created.");
+    }
+    return MENTAL_OK;
+}
 
 #endif // MENTAL_H

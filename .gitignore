@@ -19,3 +19,16 @@
 
 # Executable
 a.out
+
+# Bazel
+bazel-bin
+bazel-mental.h
+bazel-out
+bazel-testlogs
+
+# Debug Info
+Mental.dSYM
+
+Mental
+
+Binary

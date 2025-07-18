@@ -1,0 +1,4 @@
+#ifndef MENTAL_GRAPHICS_H
+#define MENTAL_GRAPHICS_H
+
+#endif // MENTAL_GRAPHICS_H
