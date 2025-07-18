@@ -31,10 +31,11 @@
 
 /*! \def mental.h versions.
  * \brief Макрос, определяющий версии mental.h
+ * \note Внимание, подобные макросы выстанавливаются автоматочески при сборке проекта. И эти будут удалены в будущем.
  */
-#define MENTAL_H_VERSION_MAJOR 1
-#define MENTAL_H_VERSION_MINOR 3
-#define MENTAL_H_VERSION_PATCH 0
+#define MENTAL_H_VERSION_MAJOR_A 1
+#define MENTAL_H_VERSION_MINOR_A 3
+#define MENTAL_H_VERSION_PATCH_A 0
 
 #define MENTAL_OPENGL_VERSION_MAJOR 3
 #define MENTAL_OPENGL_VERSION_MINOR 3

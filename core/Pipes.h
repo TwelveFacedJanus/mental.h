@@ -8,7 +8,6 @@
 #ifndef PIPES_H
 #define PIPES_H
 
-#include "Mental.h"
 /**
  * @brief Default capacity for newly created pipelines
  */

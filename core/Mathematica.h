@@ -22,6 +22,64 @@ typedef struct Vec3_##T { \
     T x, y, z; \
 } Vec3_##T
 
+#define LINKED_LIST(T) \
+typedef struct LinkedList_##T { \
+    T value; \
+    struct LinkedList_##T* next; \
+} LinkedList_##T
+
+#define LINKED_LIST_INIT(T) \
+MentalResult linked_list_init_##T(LinkedList_##T** list) { \
+    if (!list) return MENTAL_FATAL; \
+    *list = NULL; \
+    return MENTAL_OK; \
+}
+
+#define LINKED_LIST_ADD(T) \
+MentalResult linked_list_add_##T(LinkedList_##T** list, T value) { \
+    if (!list) return MENTAL_FATAL; \
+    LinkedList_##T* new_node = (LinkedList_##T*)malloc(sizeof(LinkedList_##T)); \
+    if (!new_node) return MENTAL_FATAL; \
+    new_node->value = value; \
+    new_node->next = *list; \
+    *list = new_node; \
+    return MENTAL_OK; \
+}
+
+#define LINKED_LIST_REMOVE(T) \
+MentalResult linked_list_remove_##T(LinkedList_##T** list, T value) { \
+    if (!list || !*list) return MENTAL_FATAL; \
+    LinkedList_##T* current = *list; \
+    LinkedList_##T* previous = NULL; \
+    while (current != NULL) { \
+        if (current->value == value) { \
+            if (previous == NULL) { \
+                *list = current->next; \
+            } else { \
+                previous->next = current->next; \
+            } \
+            free(current); \ 
+            return MENTAL_OK; \
+        } \
+        previous = current; \
+        current = current->next; \
+    } \
+    return MENTAL_ERROR; \
+}
+
+#define LINKED_LIST_DESTROY(T) \
+MentalResult linked_list_destroy_##T(LinkedList_##T** list) { \
+    if (!list || !*list) return MENTAL_FATAL; \
+    LinkedList_##T* current = *list; \
+    while (current != NULL) { \
+        LinkedList_##T* next = current->next; \
+        free(current); \
+        current = next; \
+    } \
+    *list = NULL; \
+    return MENTAL_OK; \
+}
+
 /**
  * @def VEC3_ZERO(T)
  * @brief Defines a function to set a Vec3_T to zero.
@@ -63,6 +121,8 @@ MentalResult vec3_fill_##T(Vec3_##T* v, T value) { \
     v->z = value; \
     return MENTAL_OK; \
 }
+
+
 
 /**
  * @def VEC3_TO_ARRAY(T)
