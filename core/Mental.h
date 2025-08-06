@@ -22,12 +22,12 @@
     #include <time.h>
     #include <string.h>
     #include <assert.h>
-    #include <uv.h>
 #endif
 
-#include <GL/glew.h>
-#include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
+
+#ifdef MENTAL_INCLUDE_GLFW
+    #include <GLFW/glfw3.h>
+#endif
 
 /*! \def mental.h versions.
  * \brief Макрос, определяющий версии mental.h
@@ -278,8 +278,14 @@ typedef enum MentalResult
     MENTAL_FATAL = -1,  /*!< Фатальная ошибка. */
     MENTAL_OK = 0,      /*!< Успешное выполнение. */
     MENTAL_ERROR = 1,   /*!< Ошибка выполнения. */
+    MENTAL_POINTER_IS_NULL = 2, /*!< Указатель на NULL. */
+    MENTAL_FAILED_TO_INIT_GLFW = 3,
+    MENTAL_FAILED_TO_CREATE_GLFW_WINDOW = 4,
+    MENTAL_NO = 5,
+    MENTAL_YES = 6,
 }
 MentalResult;
+
 
 typedef enum MentalGraphicsBackendType {
     MENTAL_OPENGL  = 0,
@@ -296,69 +302,22 @@ typedef enum MentalStructureType {
     MENTAL_STRUCTURE_TYPE_FUNCTION_PIPELINE_INFO = 4,
 } MentalStructureType;
 
-typedef struct MentalApplicationCreateInfo {
-    MentalStructureType sType;
-    MentalGraphicsBackendType gbType;
-    int debugLevel;
-} MentalApplicationCreateInfo;
 
-typedef struct MentalApplication {
-    MentalStructureType sType;
-    union {
-        GLFWwindow* window;
-    } graphics;
-} MentalApplication;
+typedef enum MentalBackendType {
+    MENTAL_BACKEND_TYPE_GLFW,
+    MENTAL_BACKEND_TYPE_CUSTOM,
+} MentalBackendType;
+
+typedef enum MentalRenderAPIType {
+    MENTAL_RENDER_API_TYPE_OPENGL,
+    MENTAL_RENDER_API_TYPE_VULKAN,
+    MENTAL_RENDER_API_TYPE_MOLTENVK,
+    MENTAL_RENDER_API_TYPE_METAL,
+    MENTAL_RENDER_API_TYPE_DIRECTX,
+} MentalRenderAPIType;
 
 #include "Historical.h"
-#include "Mathematica.h"
-#include "Asynchronous.h"
 #include "Pipes.h"
-
-static MentalResult initializeMentalApplication(MentalApplicationCreateInfo info, MentalApplication* app)
-{
-    g_log_level = info.debugLevel;
-    
-    MENTAL_DEBUG("Initializing Mental Application.");
-    if (app == NULL)
-    {
-        MENTAL_WARN("MentalApplication* is NULL.");
-        return MENTAL_FATAL;
-    }
-
-    if (info.gbType != MENTAL_NOTHING)
-    {
-        if (!glfwInit())
-        {
-            MENTAL_WARN("Cannot initialize GLFW library.");
-            return MENTAL_FATAL;
-        }
-        MENTAL_DEBUG("GLFW library has been initialized.");
-        
-        if (info.gbType == MENTAL_OPENGL)
-        {
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, MENTAL_OPENGL_VERSION_MAJOR);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, MENTAL_OPENGL_VERSION_MINOR);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-        }
-
-        app->graphics.window = glfwCreateWindow(800, 600, "Mental OpenGL renderer.", NULL, NULL);
-        if (app->graphics.window == NULL) {
-            const char* description;
-            int code = glfwGetError(&description);
-            MENTAL_WARN("GLFW window creation failed: %s (code: %d)", description, code);
-            glfwTerminate();
-            return MENTAL_FATAL;
-        }
-        glfwMakeContextCurrent(app->graphics.window);
-        
-        if (glewInit() != GLEW_OK) {
-            MENTAL_WARN("Failed to initialize mental engine. Cannot initialize GLEW.");
-            return MENTAL_FATAL;
-        }
-        MENTAL_DEBUG("GLFW window has been created.");
-    }
-    return MENTAL_OK;
-}
+#include "../graphics/graphics.h"
 
 #endif // MENTAL_H

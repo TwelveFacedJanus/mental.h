@@ -8,11 +8,13 @@
 #ifndef PIPES_H
 #define PIPES_H
 
+#include "Mental.h"
+
 /**
  * @brief Default capacity for newly created pipelines
  */
 extern int default_pipeline_capacity;
-int default_pipeline_capacity = 24;
+
 
 /**
  * @brief Function pointer type for pipeline functions
@@ -50,37 +52,14 @@ typedef struct FunctionPipeline {
  * 
  * @note If info.capacity is 0, default_pipeline_capacity will be used
  */
-MentalResult mentalCreatePipeline(FunctionPipelineInfo info, FunctionPipeline* pipe) {
-    if (!pipe) {
-        MENTAL_WARN("Pipeline is NULL.");
-        return MENTAL_ERROR;
-    }
-
-    pipe->sType = info.sType;
-    pipe->size = info.capacity > 0 ? info.capacity : default_pipeline_capacity;
-    pipe->last_index = 0;
-    pipe->functions = (fptr*)malloc(pipe->size * sizeof(fptr));
-    
-    if (!pipe->functions) {
-        MENTAL_WARN("Memory allocation failed.");
-        return MENTAL_ERROR;
-    }
-    return MENTAL_OK;
-}
+MentalResult mentalCreatePipeline(FunctionPipelineInfo info, FunctionPipeline* pipe);
 
 /**
  * @brief Destroys pipeline and releases all resources
  * @param pipe Pointer to pipeline to destroy
  * @return MentalResult MENTAL_OK on success, MENTAL_ERROR on failure
  */
-MentalResult mentalDestroyPipeline(FunctionPipeline* pipe) {
-    if (!pipe) return MENTAL_ERROR;
-    free(pipe->functions);
-    pipe->functions = NULL;
-    pipe->size = 0;
-    pipe->last_index = 0;
-    return MENTAL_OK;
-}
+MentalResult mentalDestroyPipeline(FunctionPipeline* pipe);
 
 /**
  * @brief Adds function to the pipeline
@@ -90,27 +69,7 @@ MentalResult mentalDestroyPipeline(FunctionPipeline* pipe) {
  * 
  * @note Automatically expands pipeline capacity if needed
  */
-MentalResult addF(FunctionPipeline* pipe, fptr func) {
-    if (!pipe || !func) {
-        MENTAL_WARN("Invalid Pipeline or function.");
-        return MENTAL_ERROR;
-    }
-
-    // Если массив заполнен, увеличиваем его
-    if (pipe->last_index >= pipe->size) {
-        u32 new_size = pipe->size * 2;
-        fptr* new_functions = (fptr*)realloc(pipe->functions, new_size * sizeof(fptr));
-        if (!new_functions) {
-            MENTAL_WARN("Failed to expand Pipeline.");
-            return MENTAL_ERROR;
-        }
-        pipe->functions = new_functions;
-        pipe->size = new_size;
-    }
-
-    pipe->functions[pipe->last_index++] = func;
-    return MENTAL_OK;
-}
+MentalResult addF(FunctionPipeline* pipe, fptr func);
 
 /**
  * @brief Removes function from pipeline by index
@@ -120,20 +79,7 @@ MentalResult addF(FunctionPipeline* pipe, fptr func) {
  * 
  * @note Shifts all subsequent functions to fill the gap
  */
-MentalResult removeF(FunctionPipeline* pipe, u32 index) {
-    if (!pipe || index >= pipe->last_index) {
-        MENTAL_WARN("Invalid index or Pipeline.");
-        return MENTAL_ERROR;
-    }
-
-    // Сдвигаем все элементы после index на 1 влево
-    for (u32 i = index; i < pipe->last_index - 1; i++) {
-        pipe->functions[i] = pipe->functions[i + 1];
-    }
-    pipe->last_index--;
-
-    return MENTAL_OK;
-}
+MentalResult removeF(FunctionPipeline* pipe, u32 index);
 
 /**
  * @brief Executes function at specified index
@@ -144,21 +90,7 @@ MentalResult removeF(FunctionPipeline* pipe, u32 index) {
  * 
  * @note Passes void* argument to the target function
  */
-MentalResult executeByIndex(FunctionPipeline* pipe, u32 index, void* args) {
-    if (!pipe || index >= pipe->last_index) {
-        MENTAL_WARN("Invalid index or Pipeline.");
-        return MENTAL_ERROR;
-    }
-    
-    if (!pipe->functions[index]) {
-        MENTAL_WARN("Function at index is NULL.");
-        return MENTAL_ERROR;
-    }
-    
-    pipe->functions[index](args);
-    return MENTAL_OK;
-}
-
+MentalResult executeByIndex(FunctionPipeline* pipe, u32 index, void* args);
 /**
  * @brief Executes all functions in pipeline sequentially
  * @param pipe Pointer to target pipeline
@@ -167,22 +99,7 @@ MentalResult executeByIndex(FunctionPipeline* pipe, u32 index, void* args) {
  * 
  * @note Passes the same argument to all functions in pipeline
  */
-MentalResult executeAll(FunctionPipeline* pipe, void* args) {
-    if (!pipe) {
-        MENTAL_WARN("Pipeline is NULL.");
-        return MENTAL_ERROR;
-    }
-    
-    for (u32 i = 0; i < pipe->last_index; i++) {
-        if (!pipe->functions[i]) {
-            MENTAL_WARN("Found NULL function at index %u", i);
-            continue;
-        }
-        pipe->functions[i](args);
-    }
-    
-    return MENTAL_OK;
-}
+MentalResult executeAll(FunctionPipeline* pipe, void* args);
 
 /** @} */ // End of FunctionPipeline group
 

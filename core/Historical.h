@@ -1,6 +1,8 @@
 #ifndef HISTORICAL_H
 #define HISTORICAL_H
 
+#include "Mental.h"
+
 #define LOG_LEVEL_DEBUG 0
 #define LOG_LEVEL_INFO  1
 #define LOG_LEVEL_WARN  2
@@ -8,7 +10,7 @@
 #define LOG_LEVEL_ALL   4
 
 extern int g_log_level;
-int g_log_level = LOG_LEVEL_INFO;
+
 
 #define MENTAL_DEBUG(fmt, ...) \
     do { \
