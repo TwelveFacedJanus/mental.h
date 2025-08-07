@@ -13,8 +13,8 @@ typedef struct MentalComponentInfo {
 typedef struct MentalComponent {
     MentalStructureType sType;
     MentalComponentInfo *pInfo;
-    Vec3_float          *pPosition;
-    Vec3_float          *pAngle;
+    int                 aPositions[3];
+    int                 aAngle[3];
     const void          *pNext;
 } MentalComponent;
 
