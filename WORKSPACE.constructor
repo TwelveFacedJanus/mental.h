@@ -1,6 +1,6 @@
 [project]
 name = "mental_h"
-version = "0.1.0"
+version = "0.1.1"
 language = "C"
 
 [[targets]]
@@ -9,7 +9,24 @@ out_dir = "Binary"
 os_target = "macos"
 compiler = "clang"
 kind = "executable"
-sources = ["main.c", "core/Mathematica.c", "core/Historical.c", "graphics/wm/wm.c", "core/Pipes.c"]
+sources = [
+    "main.c",
+    "core/Mathematica.c",
+    "core/Historical.c",
+    "graphics/wm/wm.c",
+    "core/Pipes.c",
+    "graphics/render/render.c"
+]
 defines = ["DEBUG=1", "MENTAL_INCLUDE_GLFW"]
 compiler_flags = ["-Wall", "-Wextra", "-g"]
-linker_flags = ["-lglfw", "-lGLEW", "-luv", "-L/opt/homebrew/lib", "-I/opt/homebrew/include"]
+linker_flags = [
+    "-lglfw",
+    "-lGLEW",
+    "-luv",
+    "-L/opt/homebrew/lib",
+    "-I/opt/homebrew/include",
+    "-framework OpenGL",
+    "-framework Cocoa",
+    "-framework IOKit",
+    "-framework CoreVideo"
+]

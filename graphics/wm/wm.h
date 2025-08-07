@@ -2,6 +2,11 @@
 #define MENTAL_WM_H
 
 #include "../../core/Mental.h"
+#include "../../core/Pipes.h"
+#include "../render/render.h"
+
+typedef MentalResult (*ShouldCloseCallbackF)(const void *);
+typedef MentalResult (*MainDrawF)(const void*);
 
 typedef struct MentalWindowManagerInfo {
     MentalStructureType     sType;
@@ -10,7 +15,6 @@ typedef struct MentalWindowManagerInfo {
     MentalBackendType       eMentalBackendType;
     MentalRenderAPIType     eMentalRenderAPIType;
     const void*             pNext;
-
 } MentalWindowManagerInfo;
 
 typedef struct MentalWindowManager {
@@ -19,6 +23,8 @@ typedef struct MentalWindowManager {
     const void              *pWindow;
     const void              *pNext;
     MentalResult            shouldClose;
+    ShouldCloseCallbackF    closeCallbackF;
+    MainDrawF               drawFunction;
 } MentalWindowManager;
 
 typedef struct MentalGLFWwindow {
@@ -26,10 +32,11 @@ typedef struct MentalGLFWwindow {
     const void *window;
 } MentalGLFWwindow;
 
+MentalResult __draw(MentalWindowManager* pManager);
 MentalResult __should_close(MentalWindowManager *pManager);
+MentalResult __set_should_close_f(MentalWindowManager *pManager, ShouldCloseCallbackF f);
 
-MentalResult mentalWMCreateGLFWwindow(MentalWindowManager *pManager);
-MentalResult mentalWMRunGLFWwindow(MentalWindowManager *pManager);
-MentalResult mentalWMDestroy(MentalWindowManager *pManager);
-
+MentalResult mentalInitializeWM(MentalWindowManager *pManager);
+MentalResult mentalRunWM(MentalWindowManager *pManager);
+MentalResult mentalDestroyWM(MentalWindowManager *pManager);
 #endif // MENTAL_WM_H

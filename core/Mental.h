@@ -24,7 +24,11 @@
     #include <assert.h>
 #endif
 
+#define MENTAL_USE_GLEW
 
+#ifdef MENTAL_USE_GLEW
+    #include <GL/glew.h>
+#endif
 #ifdef MENTAL_INCLUDE_GLFW
     #include <GLFW/glfw3.h>
 #endif
@@ -39,6 +43,9 @@
 
 #define MENTAL_OPENGL_VERSION_MAJOR 3
 #define MENTAL_OPENGL_VERSION_MINOR 3
+
+#define MENTAL_USE_MATHEMATICA
+
 
 // Макрос для создания лямбда-функций (GCC/Clang)
 #if defined(__GNUC__) || defined(__clang__)
@@ -279,8 +286,10 @@ typedef enum MentalResult
     MENTAL_OK = 0,      /*!< Успешное выполнение. */
     MENTAL_ERROR = 1,   /*!< Ошибка выполнения. */
     MENTAL_POINTER_IS_NULL = 2, /*!< Указатель на NULL. */
+#ifdef MENTAL_INCLUDE_GLFW
     MENTAL_FAILED_TO_INIT_GLFW = 3,
     MENTAL_FAILED_TO_CREATE_GLFW_WINDOW = 4,
+#endif
     MENTAL_NO = 5,
     MENTAL_YES = 6,
 }
@@ -304,7 +313,9 @@ typedef enum MentalStructureType {
 
 
 typedef enum MentalBackendType {
+#ifdef MENTAL_INCLUDE_GLFW
     MENTAL_BACKEND_TYPE_GLFW,
+#endif
     MENTAL_BACKEND_TYPE_CUSTOM,
 } MentalBackendType;
 
@@ -315,6 +326,25 @@ typedef enum MentalRenderAPIType {
     MENTAL_RENDER_API_TYPE_METAL,
     MENTAL_RENDER_API_TYPE_DIRECTX,
 } MentalRenderAPIType;
+
+
+typedef enum MentalComponentType {
+    MENTAL_COMPONENT_TYPE_RECTANGLE,
+    MENTAL_COMPONENT_TYPE_CUBE,
+    MENTAL_COMPONENT_TYPE_OBJ,
+    MENTAL_COMPONENT_TYPE_FBX,
+    MENTAL_COMPONENT_TYPE_MATERIAL,
+} MentalComponentType;
+
+typedef enum MentalMaterialType {
+    MENTAL_MATERIAL_TYPE_SHADER,
+    MENTAL_MATERIAL_TYPE_TEXTURE,
+} MentalMaterialType;
+
+
+#ifdef MENTAL_USE_MATHEMATICA
+#include "Mathematica.h"
+#endif
 
 #include "Historical.h"
 #include "Pipes.h"
