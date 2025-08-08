@@ -15,7 +15,8 @@ sources = [
     "core/Historical.c",
     "graphics/wm/wm.c",
     "core/Pipes.c",
-    "graphics/render/render.c"
+    "graphics/render/render.c",
+    "graphics/render/components.c"
 ]
 defines = ["DEBUG=1", "MENTAL_INCLUDE_GLFW"]
 compiler_flags = ["-Wall", "-Wextra", "-g"]

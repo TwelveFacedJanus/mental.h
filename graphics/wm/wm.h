@@ -8,6 +8,42 @@
 typedef MentalResult (*ShouldCloseCallbackF)(const void *);
 typedef MentalResult (*MainDrawF)(const void*);
 
+
+typedef struct MentalComponentInfo {
+    MentalStructureType sType;
+    MentalComponentType cType;
+    char                *cName;
+    void          *pNext;
+} MentalComponentInfo;
+
+typedef struct MentalShaderMaterialInfo {
+    MentalStructureType sType;
+    char*               pVertexPath;
+    char*               pFragmentPath;
+} MentalShaderMaterialInfo;
+
+typedef struct MentalShaderMaterial {
+    MentalStructureType sType;
+    unsigned int        shaderProgram;
+} MentalShaderMaterial;
+
+
+typedef struct MentalComponent {
+    MentalStructureType   sType;
+    MentalComponentInfo  *pInfo;
+    float                 aPositions[3];
+    float                 aAngle[3];
+    void                 *pNext;
+    unsigned int          VBO, VAO, EBO;
+} MentalComponent;
+
+
+typedef struct MentalComponentManager {
+    MentalComponent     components[2];
+    uint32_t            component_count;
+} MentalComponentManager;
+
+
 typedef struct MentalWindowManagerInfo {
     MentalStructureType     sType;
     int                     aWindowSizes[2];
@@ -25,12 +61,18 @@ typedef struct MentalWindowManager {
     MentalResult            shouldClose;
     ShouldCloseCallbackF    closeCallbackF;
     MainDrawF               drawFunction;
+    MentalComponentManager  *componentManager;
 } MentalWindowManager;
 
 typedef struct MentalGLFWwindow {
     MentalStructureType     sType;
     const void *window;
 } MentalGLFWwindow;
+
+MentalResult mentalRegisterComponent(MentalComponent *pComponent);
+MentalResult mentalSetNext(MentalComponent* pComponent, MentalComponent* pComponent2);
+MentalResult mentalDrawComponent(MentalComponent* pComponent);
+MentalResult mentalDestroyComponent(MentalComponent* pComponent);
 
 MentalResult __draw(MentalWindowManager* pManager);
 MentalResult __should_close(MentalWindowManager *pManager);

@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "graphics.h": "c",
-        "pipes.h": "c"
+        "pipes.h": "c",
+        "render.h": "c",
+        "mental.h": "c",
+        "mathematica.h": "c"
     }
 }

@@ -3,24 +3,9 @@
 
 #include "../../core/Mental.h"
 
-typedef struct MentalComponentInfo {
-    MentalStructureType sType;
-    MentalComponentType cType;
-    char                *cName;
-} MentalComponentInfo;
 
 
-typedef struct MentalComponent {
-    MentalStructureType sType;
-    MentalComponentInfo *pInfo;
-    int                 aPositions[3];
-    int                 aAngle[3];
-    const void          *pNext;
-} MentalComponent;
 
-MentalResult mentalRegisterComponent(MentalComponent *pComponent);
-MentalResult mentalSetNext(MentalComponent* pComponent, MentalComponent* pComponent2);
-MentalResult mentalDrawComponent(MentalComponent* pComponent);
-MentalResult mentalDestroyComponent(MentalComponent* pComponent);
+
 
 #endif // mental_components_h
