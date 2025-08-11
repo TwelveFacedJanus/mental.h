@@ -1,0 +1,53 @@
+CC = gcc
+CFLAGS = -Wall -Wextra -g -I/opt/homebrew/include
+LDFLAGS = -L/opt/homebrew/lib -lglfw -lGLEW -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo -lm
+
+SRC_DIR = .
+ENGINE_DIR = $(SRC_DIR)/engine
+BUILD_DIR = build
+
+TARGET = $(BUILD_DIR)/model3d_example
+
+# Исходные файлы
+SRCS = $(SRC_DIR)/model3d_example.c \
+       $(ENGINE_DIR)/model3d.c \
+       $(ENGINE_DIR)/component.c \
+       $(ENGINE_DIR)/wm.c \
+       $(ENGINE_DIR)/skybox.c \
+       $(ENGINE_DIR)/engine.c \
+       $(ENGINE_DIR)/perlin.c \
+       $(ENGINE_DIR)/historical.c
+
+# Объектные файлы
+OBJS = $(SRCS:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+
+# Правило по умолчанию
+all: $(TARGET)
+
+# Создание директорий для сборки
+$(BUILD_DIR)/engine:
+	mkdir -p $(BUILD_DIR)/engine
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+# Компиляция исходных файлов
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/engine/%.o: $(ENGINE_DIR)/%.c | $(BUILD_DIR)/engine
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Линковка
+$(TARGET): $(OBJS)
+	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+
+# Очистка
+clean:
+	rm -rf $(BUILD_DIR)
+
+# Запуск
+run: $(TARGET)
+	$(TARGET)
+
+.PHONY: all clean run

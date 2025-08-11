@@ -11,12 +11,11 @@ compiler = "clang"
 kind = "executable"
 sources = [
     "main.c",
-    "core/Mathematica.c",
-    "core/Historical.c",
-    "graphics/wm/wm.c",
-    "core/Pipes.c",
-    "graphics/render/render.c",
-    "graphics/render/components.c"
+    "engine/engine.c",
+    "engine/component.c",
+    "engine/historical.c",
+    "engine/project.c",
+    "engine/wm.c",
 ]
 defines = ["DEBUG=1", "MENTAL_INCLUDE_GLFW"]
 compiler_flags = ["-Wall", "-Wextra", "-g"]
@@ -24,6 +23,7 @@ linker_flags = [
     "-lglfw",
     "-lGLEW",
     "-luv",
+    "-lcglm",
     "-L/opt/homebrew/lib",
     "-I/opt/homebrew/include",
     "-framework OpenGL",
